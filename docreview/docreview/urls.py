@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('dashboard.urls')),  # Ruta raíz incluye las URLs de dashboard
+    path('', include('dashboard.urls')), 
+      # Ruta raíz incluye las URLs de dashboard
 ]

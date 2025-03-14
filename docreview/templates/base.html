@@ -1,5 +1,6 @@
 ```html
 {% load static %}
+{% include 'header.html' %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -21,7 +22,8 @@
         <div class="sidebar" data-color="purple" data-background-color="white">
             <div class="logo">
                 <a href="#" class="simple-text logo-normal">
-                    Documentos Matricula
+                    <img src="{% static 'img/sena.png' %}" alt="AdminLTE Logo" class="brand-image" 
+                    style="opacity: .8; width: 80px; height: auto;">
                 </a>
             </div>
             <div class="sidebar-wrapper">
@@ -34,10 +36,11 @@
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="#">
-                            <i class="material-icons">dashboard</i>
+                            <i class="material-icons">extension</i>
                             <p>Cargar</p>
                         </a>
-                    </li> 
+                    </li>
+                   
                 </ul>
             </div>
         </div>
