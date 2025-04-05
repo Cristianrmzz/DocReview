@@ -1,21 +1,113 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}cargar{% endblock %}
+{% block title %}Cargar Documentos{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header card-header-primary">
-                <h4 class="card-title">Cargar</h4>
-                <p class="card-category">Descripción del nuevo módulo</p>
+                <h4 class="card-title">Cargar Documentos</h4>
+                <p class="card-category">Sube documentos para revisión</p>
             </div>
             <div class="card-body">
-                <!-- Contenido de tu nuevo módulo -->
-                <p>Este es el contenido de mi nuevo módulo</p>
+                {% if mensaje %}
+                <div class="alert alert-success">
+                    {{ mensaje }}
+                </div>
+                {% endif %}
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Aquí asignamos un ID específico al input file para poder referenciarlo fácilmente -->
+                    <input type="file" id="document-input" name="{{ form.documents.name }}" multiple style="display: none;">
+                    
+                    <div class="form-group">
+                        <label>Documentos</label>
+                        
+                        <!-- Botón explícito para abrir el explorador de archivos -->
+                        <button type="button" id="browse-files" class="btn btn-secondary mb-2">Seleccionar archivos</button>
+                        
+                        <!-- Lista para mostrar los archivos seleccionados -->
+                        <div id="selected-files" class="mt-2">
+                            <p class="text-muted">No hay archivos seleccionados</p>
+                        </div>
+                        
+                        {% if form.documents.errors %}
+                        <div class="text-danger">
+                            {{ form.documents.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Cargar documentos</button>
+                </form>
+                
+                {% if archivos_cargados %}
+                <div class="mt-4">
+                    <h5>Archivos cargados:</h5>
+                    <ul class="list-group">
+                        {% for archivo in archivos_cargados %}
+                        <li class="list-group-item">{{ archivo }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Esperamos a que el DOM esté completamente cargado
+window.onload = function() {
+    // Referencias directas por ID
+    var fileInput = document.getElementById('document-input');
+    var browseButton = document.getElementById('browse-files');
+    var selectedFilesList = document.getElementById('selected-files');
+    
+    // Verificamos que existan los elementos
+    if (!fileInput || !browseButton) {
+        console.error("No se encontraron los elementos necesarios");
+        return;
+    }
+    
+    // Función para abrir el explorador de archivos
+    function openFileBrowser() {
+        fileInput.click();
+    }
+    
+    // Asignamos el evento click directamente
+    browseButton.onclick = openFileBrowser;
+    
+    // Mostramos los archivos seleccionados cuando cambia la selección
+    fileInput.onchange = function() {
+        // Limpiamos la lista
+        selectedFilesList.innerHTML = '';
+        
+        if (this.files && this.files.length > 0) {
+            // Creamos la lista de archivos
+            var fileList = document.createElement('ul');
+            fileList.className = 'list-group';
+            
+            for (var i = 0; i < this.files.length; i++) {
+                var fileItem = document.createElement('li');
+                fileItem.className = 'list-group-item';
+                fileItem.textContent = this.files[i].name;
+                fileList.appendChild(fileItem);
+            }
+            
+            selectedFilesList.appendChild(fileList);
+        } else {
+            // Mensaje si no hay archivos seleccionados
+            selectedFilesList.innerHTML = '<p class="text-muted">No hay archivos seleccionados</p>';
+        }
+    };
+    
+    // Para depuración
+    console.log("Script cargado correctamente");
+};
+</script>
 {% endblock %}

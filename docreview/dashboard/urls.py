@@ -5,6 +5,6 @@ app_name = 'dashboard'  # Namespace opcional pero recomendado
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('cargar/', views.cargar_view, name='cargar'),
+    path('cargar/', views.cargar_documentos, name='cargar_documentos'),
     # Página principal del dashboard
 ]

@@ -1,8 +1,7 @@
-```html
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Dashboard Principal{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -12,35 +11,95 @@
                 <div class="card-icon">
                     <i class="material-icons">content_copy</i>
                 </div>
-                <p class="card-category">Usuarios</p>
-                <h3 class="card-title">150
-                    <small>usuarios</small>
+                <p class="card-category">Documentos</p>
+                <h3 class="card-title">0
+                    <small>documentos</small>
                 </h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">update</i> Actualizado hace 4 minutos
+                    <i class="material-icons">date_range</i> Últimas 24 horas
                 </div>
             </div>
         </div>
     </div>
-    
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-stats">
             <div class="card-header card-header-success card-header-icon">
                 <div class="card-icon">
-                    <i class="material-icons">store</i>
+                    <i class="material-icons">check_circle</i>
                 </div>
-                <p class="card-category">Ingresos</p>
-                <h3 class="card-title">$34,245</h3>
+                <p class="card-category">Revisados</p>
+                <h3 class="card-title">0</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
-                    <i class="material-icons">date_range</i> Último mes
+                    <i class="material-icons">date_range</i> Últimos 7 días
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-danger card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">info_outline</i>
+                </div>
+                <p class="card-category">Pendientes</p>
+                <h3 class="card-title">0</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons">local_offer</i> Requieren atención
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-info card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">people</i>
+                </div>
+                <p class="card-category">Usuarios</p>
+                <h3 class="card-title">0</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons">update</i> Recién actualizado
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Documentos Recientes</h4>
+                <p class="card-category">Últimos documentos cargados en el sistema</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="text-primary">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="text-center">No hay documentos disponibles</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
-```

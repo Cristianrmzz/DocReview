@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import redirect
+from dashboard.views import redirect_to_dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('dashboard.urls')), 
-      # Ruta raíz incluye las URLs de dashboard
+    path('dashboard/', include(('dashboard.urls', 'dashboard'), namespace='dashboard')), 
+    path('', redirect_to_dashboard, name='home')
+    # Ruta raíz incluye las URLs de dashboard
 ]

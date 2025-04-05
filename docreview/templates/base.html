@@ -34,8 +34,8 @@
                             <p>Inicio</p>
                         </a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">
+                    <li class="nav-item {% if request.path == '/cargar/' %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'dashboard:cargar_documentos' %}">
                             <i class="material-icons">extension</i>
                             <p>Cargar</p>
                         </a>
