@@ -1,49 +1,55 @@
-
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Documento
 from .forms import DocumentUploadForm
-from django.shortcuts import redirect
+from django.http import FileResponse
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
+@login_required
 def index(request):
-    return render(request, 'dashboard.html')
+    # Obtener estadísticas
+    total_documentos = Documento.objects.count()
+    documentos_revisados = Documento.objects.filter(estado='revisado').count()
+    documentos_pendientes = Documento.objects.filter(estado='pendiente').count()
+    total_usuarios = User.objects.count() if 'auth.User' in str(User) else 0
+    
+    # Obtener documentos recientes
+    documentos_recientes = Documento.objects.all().order_by('-fecha_carga')[:10]
+    
+    context = {
+        'total_documentos': total_documentos,
+        'documentos_revisados': documentos_revisados,
+        'documentos_pendientes': documentos_pendientes,
+        'total_usuarios': total_usuarios,
+        'documentos_recientes': documentos_recientes
+    }
+    
+    return render(request, 'dashboard.html', context)
+@login_required
 def cargar_documentos(request):
     mensaje = None
     archivos_cargados = []
     
-    form = DocumentUploadForm()
-    
     if request.method == 'POST':
         form = DocumentUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            files = request.FILES.getlist('documents')
+            documentos = request.FILES.getlist('documents')
+            for doc in documentos:
+                # Crear una instancia del modelo Documento
+                documento = Documento(
+                    nombre=doc.name,
+                    archivo=doc,
+                    usuario=request.user if request.user.is_authenticated else None
+                )
+                documento.save()
+                archivos_cargados.append(doc.name)
             
-            # Crear directorio para guardar archivos si no existe
-            import os
-            from django.conf import settings
-            
-            # Definimos la ruta donde se guardarán los archivos
-            upload_dir = os.path.join(settings.MEDIA_ROOT, 'uploads')
-            
-            # Creamos el directorio si no existe
-            if not os.path.exists(upload_dir):
-                os.makedirs(upload_dir)
-            
-            for file in files:
-                # Generamos una ruta completa para guardar el archivo
-                file_path = os.path.join(upload_dir, file.name)
-                
-                # Guardamos el archivo físicamente en el servidor
-                with open(file_path, 'wb+') as destination:
-                    for chunk in file.chunks():
-                        destination.write(chunk)
-                
-                # Opcional: guardar la información del archivo en la base de datos
-                # nuevo_documento = Documento(nombre=file.name, ruta=file_path)
-                # nuevo_documento.save()
-                
-                # Guardamos el nombre del archivo para mostrarlo en la vista
-                archivos_cargados.append(file.name)
-            
-            mensaje = "Archivos cargados correctamente"
+            mensaje = "Documentos cargados correctamente"
+    else:
+        form = DocumentUploadForm()
     
     context = {
         'form': form,
@@ -51,6 +57,29 @@ def cargar_documentos(request):
         'archivos_cargados': archivos_cargados
     }
     return render(request, 'cargar.html', context)
-
+@login_required
+def descargar_documento(request, documento_id):
+    documento = get_object_or_404(Documento, id=documento_id)
+    return FileResponse(documento.archivo, as_attachment=True, filename=documento.nombre)
+@login_required
+def marcar_revisado(request, documento_id):
+    documento = get_object_or_404(Documento, id=documento_id)
+    documento.estado = 'revisado'
+    documento.save()
+    messages.success(request, f"Documento '{documento.nombre}' marcado como revisado")
+    return redirect('dashboard:index')
+@login_required
 def redirect_to_dashboard(request):
     return redirect('dashboard:index')
+@login_required
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard:index')
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'register.html', {'form': form})

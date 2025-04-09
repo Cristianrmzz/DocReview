@@ -12,7 +12,7 @@
                     <i class="material-icons">content_copy</i>
                 </div>
                 <p class="card-category">Documentos</p>
-                <h3 class="card-title">0
+                <h3 class="card-title">{{ total_documentos }}
                     <small>documentos</small>
                 </h3>
             </div>
@@ -30,7 +30,7 @@
                     <i class="material-icons">check_circle</i>
                 </div>
                 <p class="card-category">Revisados</p>
-                <h3 class="card-title">0</h3>
+                <h3 class="card-title">{{ documentos_revisados }}</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
@@ -46,7 +46,7 @@
                     <i class="material-icons">info_outline</i>
                 </div>
                 <p class="card-category">Pendientes</p>
-                <h3 class="card-title">0</h3>
+                <h3 class="card-title">{{ documentos_pendientes }}</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
@@ -62,7 +62,7 @@
                     <i class="material-icons">people</i>
                 </div>
                 <p class="card-category">Usuarios</p>
-                <h3 class="card-title">0</h3>
+                <h3 class="card-title">{{ total_usuarios }}</h3>
             </div>
             <div class="card-footer">
                 <div class="stats">
@@ -92,9 +92,33 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="4" class="text-center">No hay documentos disponibles</td>
-                            </tr>
+                            {% if documentos_recientes %}
+                                {% for documento in documentos_recientes %}
+                                <tr>
+                                    <td>{{ documento.nombre }}</td>
+                                    <td>{{ documento.fecha_carga|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% if documento.estado == 'pendiente' %}
+                                            <span class="badge badge-warning">Pendiente</span>
+                                        {% else %}
+                                            <span class="badge badge-success">Revisado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'dashboard:descargar_documento' documento.id %}" class="btn btn-sm btn-info">
+                                            <i class="material-icons">download</i> Descargar
+                                        </a>
+                                        <a href="{% url 'dashboard:marcar_revisado' documento.id %}" class="btn btn-sm btn-success">
+                                            <i class="material-icons">check</i> Marcar revisado
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No hay documentos disponibles</td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>

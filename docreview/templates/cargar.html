@@ -22,7 +22,7 @@
                     {% csrf_token %}
                     
                     <!-- Aquí asignamos un ID específico al input file para poder referenciarlo fácilmente -->
-                    <input type="file" id="document-input" name="{{ form.documents.name }}" multiple style="display: none;">
+                    <input type="file" name="documents" id="document-input" multiple required style="display: none;">
                     
                     <div class="form-group">
                         <label>Documentos</label>
