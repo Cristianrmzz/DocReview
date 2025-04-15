@@ -7,6 +7,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+from .decorators import superuser_required
+
 
 @login_required
 def index(request):
@@ -18,7 +22,19 @@ def index(request):
     
     # Obtener documentos recientes
     documentos_recientes = Documento.objects.all().order_by('-fecha_carga')[:10]
-    
+    # Documentos específicos según el usuario
+    if request.user.is_superuser:
+        # Superusuarios ven todos los documentos
+        documentos_recientes = Documento.objects.all().order_by('-fecha_carga')[:10]
+        documentos_revisados = Documento.objects.filter(estado='revisado').count()
+        documentos_pendientes = Documento.objects.filter(estado='pendiente').count()
+        total_usuarios = User.objects.count() if 'auth.User' in str(User) else 0
+    else:
+        # Usuarios normales solo ven sus propios documentos
+        documentos_recientes = Documento.objects.filter(usuario=request.user).order_by('-fecha_carga')[:10]
+        documentos_revisados = Documento.objects.filter(usuario=request.user, estado='revisado').count()
+        documentos_pendientes = Documento.objects.filter(usuario=request.user, estado='pendiente').count()
+        total_usuarios = 0  # No necesitan ver esto
     context = {
         'total_documentos': total_documentos,
         'documentos_revisados': documentos_revisados,
@@ -28,6 +44,7 @@ def index(request):
     }
     
     return render(request, 'dashboard.html', context)
+
 @login_required
 def cargar_documentos(request):
     mensaje = None
@@ -57,20 +74,26 @@ def cargar_documentos(request):
         'archivos_cargados': archivos_cargados
     }
     return render(request, 'cargar.html', context)
+
 @login_required
+@superuser_required
 def descargar_documento(request, documento_id):
     documento = get_object_or_404(Documento, id=documento_id)
     return FileResponse(documento.archivo, as_attachment=True, filename=documento.nombre)
+
 @login_required
+@superuser_required
 def marcar_revisado(request, documento_id):
     documento = get_object_or_404(Documento, id=documento_id)
     documento.estado = 'revisado'
     documento.save()
     messages.success(request, f"Documento '{documento.nombre}' marcado como revisado")
     return redirect('dashboard:index')
+
 @login_required
 def redirect_to_dashboard(request):
     return redirect('dashboard:index')
+
 @login_required
 def register(request):
     if request.method == 'POST':
@@ -83,3 +106,16 @@ def register(request):
         form = UserCreationForm()
     
     return render(request, 'register.html', {'form': form})
+
+
+@login_required
+@superuser_required
+def eliminar_documento(request, documento_id):
+    documento = get_object_or_404(Documento, id=documento_id)
+    nombre_documento = documento.nombre
+    documento.delete()
+    messages.success(request, f"Documento '{nombre_documento}' eliminado correctamente")
+    return redirect('dashboard:index')
+
+def inicio(request):
+    return render(request, 'inicio.html')

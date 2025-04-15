@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bienvenido{% endblock %}
+
+{% block content %}
+    <style>
+        .contenido {
+            position: absolute;
+            top: -70px; /* espacio desde arriba, puedes ajustar */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: Green; 
+        }
+    </style>
+
+    <div class="contenido">
+        <h1>¡Bienvenido a Docreview!</h1>
+        <p>Aca podrá cargar sus documentos para su matrícula</p>
+        <p><a href="{% url 'dashboard:index' %}" class="btn btn-success">Ver documentos</a>
+        </p>
+    </div>
+{% endblock %}

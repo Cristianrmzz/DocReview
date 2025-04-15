@@ -22,14 +22,18 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from dashboard.views import register
+from django.contrib.auth.views import LogoutView
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', include(('dashboard.urls', 'dashboard'), namespace='dashboard')), 
-    path('', redirect_to_dashboard, name='home'),
+    path('', include('dashboard.urls')),
     path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
     path('register/', register, name='register'),
+    
 ]
 
 if settings.DEBUG:

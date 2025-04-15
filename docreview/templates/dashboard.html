@@ -111,10 +111,34 @@
                                         <a href="{% url 'dashboard:marcar_revisado' documento.id %}" class="btn btn-sm btn-success">
                                             <i class="material-icons">check</i> Marcar revisado
                                         </a>
+                                        <a href="{% url 'dashboard:eliminar_documento' documento.id %}" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este documento?');">
+                                         <i class="material-icons">delete</i> Eliminar
+                                     </a>
+                                     
                                     </td>
                                 </tr>
                                 {% endfor %}
                             {% else %}
+                            <td>
+                                {% if user.is_superuser %}
+                                {% if documento.id %}
+                                <a href="{% url 'dashboard:descargar_documento' documento.id %}" class="btn btn-sm btn-info">
+                                    <i class="material-icons">download</i> Descargar
+                                </a>
+                                <a href="{% url 'dashboard:marcar_revisado' documento.id %}" class="btn btn-sm btn-success">
+                                    <i class="material-icons">check</i> Marcar revisado
+                                </a>
+                                {% if documento.estado == 'revisado' %}
+                                <a href="{% url 'dashboard:eliminar_documento' documento.id %}" class="btn btn-sm btn-danger" 
+                                   onclick="return confirm('¿Estás seguro de que deseas eliminar este documento?');">
+                                    <i class="material-icons">delete</i> Eliminar
+                                </a>
+                                {% endif %}
+                                {% else %}
+                                <span class="text-muted">Solo administradores pueden gestionar documentos</span>
+                                {% endif %}
+                            </td>
                                 <tr>
                                     <td colspan="4" class="text-center">No hay documentos disponibles</td>
                                 </tr>
@@ -126,4 +150,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
