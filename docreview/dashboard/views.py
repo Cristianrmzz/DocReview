@@ -54,11 +54,16 @@ def cargar_documentos(request):
         form = DocumentUploadForm(request.POST, request.FILES)
         if form.is_valid():
             documentos = request.FILES.getlist('documents')
+            tipo_documento = request.POST.get('tipo_documento')
+            descripcion = request.POST.get('descripcion')
+            
             for doc in documentos:
-                # Crear una instancia del modelo Documento
+                # Crear una instancia del modelo Documento con los nuevos campos
                 documento = Documento(
                     nombre=doc.name,
                     archivo=doc,
+                    tipo_documento=tipo_documento, 
+                    descripcion=descripcion,
                     usuario=request.user if request.user.is_authenticated else None
                 )
                 documento.save()

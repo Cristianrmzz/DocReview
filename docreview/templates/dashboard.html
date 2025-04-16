@@ -76,16 +76,18 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header card-header-primary">
+            <div class="card-header card-header-success">
                 <h4 class="card-title">Documentos Recientes</h4>
                 <p class="card-category">Últimos documentos cargados en el sistema</p>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
-                        <thead class="text-primary">
+                        <thead class="text-success">
                             <tr>
                                 <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
                                 <th>Fecha</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
@@ -96,6 +98,22 @@
                                 {% for documento in documentos_recientes %}
                                 <tr>
                                     <td>{{ documento.nombre }}</td>
+                                    <td>
+                                        {% if documento.tipo_documento == 'articulacion_media' %}
+                                            Articulación con la media
+                                        {% elif documento.tipo_documento == 'oferta_cerrada' %}
+                                            Oferta cerrada
+                                        {% elif documento.tipo_documento == 'oferta_abierta' %}
+                                            Oferta abierta
+                                        {% elif documento.tipo_documento == 'reporte_academico' %}
+                                            Reporte académico
+                                        {% elif documento.tipo_documento == 'planificacion' %}
+                                            Planificación
+                                        {% else %}
+                                            {{ documento.tipo_documento|default:"No especificado" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ documento.descripcion|default:"Sin descripción" }}</td>
                                     <td>{{ documento.fecha_carga|date:"d/m/Y H:i" }}</td>
                                     <td>
                                         {% if documento.estado == 'pendiente' %}
@@ -140,7 +158,7 @@
                                 {% endif %}
                             </td>
                                 <tr>
-                                    <td colspan="4" class="text-center">No hay documentos disponibles</td>
+                                    <td colspan="6" class="text-center">No hay documentos disponibles</td>
                                 </tr>
                             {% endif %}
                         </tbody>

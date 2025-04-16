@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header card-header-primary">
+            <div class="card-header card-header-success">
                 <h4 class="card-title">Cargar Documentos</h4>
                 <p class="card-category">Sube documentos para revisión</p>
             </div>
@@ -21,7 +21,35 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <!-- Aquí asignamos un ID específico al input file para poder referenciarlo fácilmente -->
+                    <!-- Menú desplegable para seleccionar el tipo de documento -->
+                    <div class="form-group">
+                        <label for="tipo_documento">Tipo de Documento</label>
+                        <select class="form-control" id="tipo_documento" name="tipo_documento" required>
+                            <option value="" selected disabled>Seleccione un tipo de documento</option>
+                            <option value="articulacion_media">Articulación con la media</option>
+                            <option value="oferta_cerrada">Oferta cerrada</option>
+                            <option value="oferta_abierta">Oferta abierta</option>
+                            
+                        </select>
+                        {% if form.tipo_documento.errors %}
+                        <div class="text-danger">
+                            {{ form.tipo_documento.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Campo para la descripción del documento -->
+                    <div class="form-group">
+                        <label for="descripcion">Descripción del documento</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" placeholder="Ingrese una breve descripción del documento que está subiendo"></textarea>
+                        {% if form.descripcion.errors %}
+                        <div class="text-danger">
+                            {{ form.descripcion.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Input file oculto para la selección de archivos -->
                     <input type="file" name="documents" id="document-input" multiple required style="display: none;">
                     
                     <div class="form-group">
@@ -42,7 +70,7 @@
                         {% endif %}
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">Cargar documentos</button>
+                    <button type="submit" class="btn btn-success">Cargar documentos</button>
                 </form>
                 
                 {% if archivos_cargados %}
